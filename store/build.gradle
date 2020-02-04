@@ -1,0 +1,10 @@
+apply plugin: 'kotlin'
+
+dependencies {
+    implementation kotlinDependencies.kotlinStdlib
+
+    testImplementation unitTestDependencies.junit
+    testImplementation unitTestDependencies.mockito
+    testImplementation unitTestDependencies.hamcrestLibrary
+    testImplementation unitTestDependencies.hamcrestCore
+}

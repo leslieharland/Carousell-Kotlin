@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="userName" type="id" />
+    <item name="location" type="id" />
+    <item name="ivProfile" type="id" />
+    <item name="followerNumber" type="id">0</item>
+    <item name="followingNumber" type="id">0</item>
+    <item name="firstName" type="id" />
+    <item name="lastName" type="id" />
+    <item name="myCity" type="id" />
+    <item name="website" type="id" />
+    <item name="biography" type="id" />
+</resources>

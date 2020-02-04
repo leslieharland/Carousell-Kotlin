@@ -1,0 +1,78 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'realm-android'
+
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+
+        testInstrumentationRunner rootProject.ext.testInstrumentationRunner
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+    }
+
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            def urlValue = "http://192.168.1.82:8000"
+            buildConfigField ("String", "API_ENDPOINT", "\"${urlValue}\"")
+        }
+    }
+}
+
+dependencies {
+    implementation project(':store')
+
+    implementation kotlinDependencies.kotlinStdlib
+
+    //api
+    implementation data.moshi
+    implementation data.rxjava
+    implementation data.retrofit
+    implementation data.gson
+    implementation data.coRoutineCore
+    implementation data.coRoutineAndroid
+
+    implementation data.lifecycle
+    implementation data.lifecycleExt
+
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.1"
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+
+    implementation("ru.gildor.coroutines:kotlin-coroutines-retrofit:0.8.2"){
+        exclude group: 'com.squareup.retrofit2', module:'retrofit'
+    }
+
+    implementation ('android.arch.lifecycle:livedata:1.1.0') {
+        force = true;
+    }
+    implementation ('android.arch.lifecycle:viewmodel:1.1.0') {
+        force = true;
+    }
+    androidTestImplementation supportDependencies.supportAnnotations
+    androidTestImplementation instrumentationTestDependencies.testRunner
+    androidTestImplementation instrumentationTestDependencies.testRules
+    androidTestImplementation unitTestDependencies.mockito
+    androidTestImplementation unitTestDependencies.dexmakerMockito
+    androidTestImplementation unitTestDependencies.mockitoKotlin
+
+    testImplementation unitTestDependencies.junit
+    testImplementation unitTestDependencies.mockito
+    testImplementation unitTestDependencies.hamcrestLibrary
+    testImplementation unitTestDependencies.hamcrestCore
+}

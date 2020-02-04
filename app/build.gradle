@@ -1,0 +1,103 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    def Properties versionProps = readVersionProps()
+    defaultConfig {
+        multiDexEnabled true
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+
+        versionName versionProps['name']
+        versionCode versionProps['code'].toInteger()
+        applicationId versionProps['applicationId']
+
+        testInstrumentationRunner rootProject.ext.customTestInstrumentationRunner
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    sourceSets {
+        main {
+            res.srcDirs += [
+                    'src/main/res/main',
+                    'src/main/res/itemslist',
+                    'src/main/res/edititem']
+            java.srcDirs += 'src/main/kotlin'
+        }
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+    }
+
+
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            def urlValue = "http://192.168.1.82:8000"
+            buildConfigField ("String", "API_ENDPOINT", "\"${urlValue}\"")
+        }
+    }
+}
+
+dependencies {
+    implementation project(':persistence')
+    implementation project(':store')
+
+    implementation "com.android.support:multidex:1.0.3"
+
+    //Kotlin & anko
+    implementation kotlinDependencies.kotlinStdlib
+
+    implementation ankoDependencies.ankoCommon
+    implementation ankoDependencies.ankoDesign
+    implementation ankoDependencies.ankoSupport
+    implementation(ankoDependencies.anko){
+        exclude group: 'org.jetbrains.kotlinx', module:'kotlinx-coroutines-android'
+    }
+
+    debugImplementation config.stetho
+    debugImplementation config.stethoRealm
+
+    implementation ui.viewPager
+
+
+    //Android Support Library
+    implementation supportDependencies.supportCoreUiV4
+    implementation supportDependencies.supportFragmentV4
+    implementation supportDependencies.supportAnnotations
+    implementation supportDependencies.appCompatV7
+    implementation supportDependencies.recyclerViewV7
+    implementation supportDependencies.cardViewV7
+    implementation supportDependencies.supportDesign
+
+    //Instrumentation tests
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    androidTestImplementation supportDependencies.supportAnnotations
+    androidTestImplementation instrumentationTestDependencies.testRunner
+    androidTestImplementation instrumentationTestDependencies.testRules
+    androidTestImplementation instrumentationTestDependencies.espressoCore
+    androidTestImplementation instrumentationTestDependencies.espressoContrib
+    androidTestImplementation instrumentationTestDependencies.espressoIdlingResources
+
+    //Unit tests
+    testImplementation unitTestDependencies.junit
+    testImplementation unitTestDependencies.mockito
+    testImplementation unitTestDependencies.hamcrestLibrary
+    testImplementation unitTestDependencies.hamcrestCore
+    testImplementation unitTestDependencies.robolectric
+    testImplementation unitTestDependencies.mockitoKotlin
+}
+
+def readVersionProps() {
+    def Properties props = new Properties()
+    props.load(new FileInputStream(file('../version.properties')))
+    return props
+}

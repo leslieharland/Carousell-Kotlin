@@ -1,0 +1,85 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    apply from: 'dependencies.gradle'
+
+    repositories {
+        mavenCentral()
+        google()
+        jcenter()
+    }
+
+
+    dependencies {
+        classpath config.gradlePlugin
+        classpath config.kotlinGradlePlugin
+        classpath config.kotlinAndroidExtensions
+        classpath config.realmPlugin
+    }
+}
+configure(subprojects.findAll {it.name == 'app'}) {
+    repositories {
+        google()
+        jcenter()
+        maven { url 'https://github.com/WickeDev/stetho-realm/raw/master/maven-repo' }
+        maven { url "https://maven.google.com" }
+    }
+
+}
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven {
+            url "https://maven.google.com"
+        }
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            failOnVersionConflict()
+
+            force kotlinDependencies.kotlinStdlib
+            force kotlinDependencies.kotlinReflect
+
+            force data.coRoutineCore
+
+            force "com.android.support:multidex:1.0.3"
+            force data.lifecycle
+            force "android.arch.core:common:1.1.1"
+            force "android.arch.core:runtime:1.1.1"
+            force "android.arch.lifecycle:livedata:1.1.1"
+            force "android.arch.lifecycle:viewmodel:1.1.1"
+
+
+
+            force "io.reactivex.rxjava2:rxjava:2.1.6"
+            force "com.google.guava:guava:22.0"
+            force "com.squareup.okio:okio:1.14.0"
+            force "org.apache.httpcomponents:httpcore:4.2.5"
+            // Since Espresso is using under the hood a lower version of the support library we currently
+            // use, and both, test and app dependencies need to be the same, we force to use the latest version.
+            // http://g.co/androidstudio/app-test-app-conflict
+            force "com.android.support:support-v4:26.1.0"
+            force supportDependencies.supportFragmentV4
+            force supportDependencies.supportAnnotations
+            force supportDependencies.supportCoreUiV4
+            force supportDependencies.appCompatV7
+            force supportDependencies.recyclerViewV7
+            force supportDependencies.supportDesign
+            force unitTestDependencies.hamcrestCore
+
+            //Espresso has an old version
+            force "com.google.code.findbugs:jsr305:3.0.2"
+
+            //With dexmakerMockito we have dependency version problems, so we force to use our own.
+            force unitTestDependencies.mockito
+
+            // It seems robolectric has conflicts with the latest version of junit we use in our app
+            // and the version the below library uses, so we have to force both junit and "plexus" to
+            // to use the latest versions
+            force unitTestDependencies.junit
+            force "org.codehaus.plexus:plexus-utils:1.5.15"
+        }
+    }
+}
